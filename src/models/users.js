@@ -23,7 +23,6 @@ const userSchema = new Schema({
         unique: true,
         trim: true,
         validate(value) {
-            console.log('validator.isEmail(value)', validator.isEmail(value));
             if(!validator.isEmail(value)){
                 throw new Error("Invalid email:" + value);
             }
