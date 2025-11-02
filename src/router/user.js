@@ -48,6 +48,10 @@ userRouter.get('/user/connections', userAuthentication, async (req, res) => {
 
 userRouter.get('/user/feed', userAuthentication, async (req, res) => {
     const loggedInUser = req.user;
+    const page = req.query.page || 1;
+    let limit = req.query.limit || 10;
+    limit = limit > 50 ? 10 : limit;
+    const skip = (page-1)*limit;
     const allConectionRequests = await connectionRequest.find({
         $or: [
             {fromUserId: loggedInUser._id},
@@ -58,17 +62,17 @@ userRouter.get('/user/feed', userAuthentication, async (req, res) => {
     allConectionRequests.forEach(request => {
         hideInUserIds.add(request.fromUserId);
         hideInUserIds.add(request.toUserId);
-    })
+    });
     const finalUserList = await Users.find({
         $and: [
             {_id: { $nin: Array.from(hideInUserIds)}},
             {_id: { $ne: loggedInUser._id}}
         ]
-    }).select(SAFE_STRING);
+    }).select(SAFE_STRING).limit(limit).skip(skip);
     res.json({
         message: 'Feed List fetch successfully',
         data: finalUserList 
-    })
+    });
 })
 
 module.exports = userRouter;
