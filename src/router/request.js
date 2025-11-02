@@ -70,7 +70,7 @@ requestRouter.post('/request/review/:status/:requestId', userAuthentication, asy
          data: updatedData
       })
    } catch(err) {
-     res.status(400).send('Something went wrong' + err);
+     res.status(400).send('Something went wrong' + err.message);
    }
    
 })
